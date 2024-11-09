@@ -1,13 +1,16 @@
 import { frontendURL } from '../../../../helper/URLHelper';
+import { FEATURE_FLAGS } from 'dashboard/featureFlags';
 
-const SettingsContent = () => import('../Wrapper.vue');
-const Index = () => import('./Index.vue');
-const AgentReports = () => import('./AgentReports.vue');
-const LabelReports = () => import('./LabelReports.vue');
-const InboxReports = () => import('./InboxReports.vue');
-const TeamReports = () => import('./TeamReports.vue');
-const CsatResponses = () => import('./CsatResponses.vue');
-const LiveReports = () => import('./LiveReports.vue');
+import SettingsContent from '../Wrapper.vue';
+import Index from './Index.vue';
+import AgentReports from './AgentReports.vue';
+import LabelReports from './LabelReports.vue';
+import InboxReports from './InboxReports.vue';
+import TeamReports from './TeamReports.vue';
+import CsatResponses from './CsatResponses.vue';
+import BotReports from './BotReports.vue';
+import LiveReports from './LiveReports.vue';
+import SLAReports from './SLAReports.vue';
 
 export default {
   routes: [
@@ -22,12 +25,16 @@ export default {
       children: [
         {
           path: '',
-          redirect: 'overview',
+          redirect: to => {
+            return { name: 'account_overview_reports', params: to.params };
+          },
         },
         {
           path: 'overview',
           name: 'account_overview_reports',
-          roles: ['administrator'],
+          meta: {
+            permissions: ['administrator', 'report_manage'],
+          },
           component: LiveReports,
         },
       ],
@@ -44,7 +51,9 @@ export default {
         {
           path: 'conversation',
           name: 'conversation_reports',
-          roles: ['administrator'],
+          meta: {
+            permissions: ['administrator', 'report_manage'],
+          },
           component: Index,
         },
       ],
@@ -61,8 +70,30 @@ export default {
         {
           path: 'csat',
           name: 'csat_reports',
-          roles: ['administrator'],
+          meta: {
+            permissions: ['administrator', 'report_manage'],
+          },
           component: CsatResponses,
+        },
+      ],
+    },
+    {
+      path: frontendURL('accounts/:accountId/reports'),
+      component: SettingsContent,
+      props: {
+        headerTitle: 'BOT_REPORTS.HEADER',
+        icon: 'bot',
+        keepAlive: false,
+      },
+      children: [
+        {
+          path: 'bot',
+          name: 'bot_reports',
+          meta: {
+            permissions: ['administrator', 'report_manage'],
+            featureFlag: FEATURE_FLAGS.RESPONSE_BOT,
+          },
+          component: BotReports,
         },
       ],
     },
@@ -78,7 +109,9 @@ export default {
         {
           path: 'agent',
           name: 'agent_reports',
-          roles: ['administrator'],
+          meta: {
+            permissions: ['administrator', 'report_manage'],
+          },
           component: AgentReports,
         },
       ],
@@ -95,7 +128,9 @@ export default {
         {
           path: 'label',
           name: 'label_reports',
-          roles: ['administrator'],
+          meta: {
+            permissions: ['administrator', 'report_manage'],
+          },
           component: LabelReports,
         },
       ],
@@ -112,7 +147,9 @@ export default {
         {
           path: 'inboxes',
           name: 'inbox_reports',
-          roles: ['administrator'],
+          meta: {
+            permissions: ['administrator', 'report_manage'],
+          },
           component: InboxReports,
         },
       ],
@@ -128,8 +165,30 @@ export default {
         {
           path: 'teams',
           name: 'team_reports',
-          roles: ['administrator'],
+          meta: {
+            permissions: ['administrator', 'report_manage'],
+          },
           component: TeamReports,
+        },
+      ],
+    },
+    {
+      path: frontendURL('accounts/:accountId/reports'),
+      component: SettingsContent,
+      props: {
+        headerTitle: 'SLA_REPORTS.HEADER',
+        icon: 'document-list-clock',
+        keepAlive: false,
+      },
+      children: [
+        {
+          path: 'sla',
+          name: 'sla_reports',
+          meta: {
+            permissions: ['administrator', 'report_manage'],
+            featureFlag: FEATURE_FLAGS.SLA,
+          },
+          component: SLAReports,
         },
       ],
     },
